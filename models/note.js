@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+mongoose.set('useFindAndModify',false)
 
 const url = process.env.MONGODB_URI
 
@@ -13,14 +14,22 @@ mongoose.connect(url,{useNewUrlParser: true})
 }) 
 
 const noteSchema = new mongoose.Schema({
-    content: String,
-    date: Date,
+    content: {
+        type: String,
+        minlength: 5,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
     important: Boolean,
 })
 
 noteSchema.set('toJSON',{
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
+        returnedObject.date = returnedObject.date
         delete returnedObject._id
         delete returnedObject._v
     }
